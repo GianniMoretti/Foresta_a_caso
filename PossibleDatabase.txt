@@ -31,8 +31,10 @@ https://archive-beta.ics.uci.edu/dataset/53/iris
 
 label_name = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
 delete_this_row = []
-df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data", names = label_name)
+dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 classes_feature_name = 'species'
+categorical_column = []
+criterion_type = 'gini'
 
 ---------------------------------------------------------------------------------------
 HEART DISEASE
@@ -59,6 +61,8 @@ label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach
 delete_this_row = [87,166,192,266,287,302]
 dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
 classes_feature_name = 'risknum'
+categorical_column = [2,5,6,8,10,11,12]
+criterion_type = 'gini'
 
 -------------------------------------------------------------------------------------------
 REQUIREMENTS

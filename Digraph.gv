@@ -1,0 +1,70 @@
+// example
+digraph {
+	node [color=lightblue fontname=helvetica shape=box style="filled, rounded"]
+	1 [label="petal_length<=2.35
+
+type=numerical
+gini=0.665
+sample=120
+count=[39, 37, 44]
+class=Iris-virginica"]
+	2 [label="type=leaf
+
+gini=0.0
+sample=39
+count=[39, 0, 0]
+class=Iris-setosa"]
+	1 -> 2
+	3 [label="petal_width<=1.75
+
+type=numerical
+gini=0.496
+sample=81
+count=[0, 37, 44]
+class=Iris-virginica"]
+	4 [label="petal_length<=4.95
+
+type=numerical
+gini=0.18
+sample=40
+count=[0, 36, 4]
+class=Iris-versicolor"]
+	5 [label="type=leaf
+
+gini=0.056
+sample=35
+count=[0, 34, 1]
+class=Iris-versicolor"]
+	4 -> 5
+	6 [label="type=leaf
+
+gini=0.48
+sample=5
+count=[0, 2, 3]
+class=Iris-virginica"]
+	4 -> 6
+	3 -> 4
+	7 [label="petal_length<=4.85
+
+type=numerical
+gini=0.048
+sample=41
+count=[0, 1, 40]
+class=Iris-virginica"]
+	8 [label="type=leaf
+
+gini=0.5
+sample=2
+count=[0, 1, 1]
+class=Iris-virginica"]
+	7 -> 8
+	9 [label="type=leaf
+
+gini=0.0
+sample=39
+count=[0, 0, 39]
+class=Iris-virginica"]
+	7 -> 9
+	3 -> 7
+	1 -> 3
+}

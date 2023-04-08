@@ -14,7 +14,8 @@ class Node:
         self.class_value = None
 
 class DecisionTreeClassifier:
-    def __init__(self, criterion = 'gini', min_sample_split = 2, max_depth = None, num_of_feature_on_split = None):
+    def __init__(self, criterion = 'gini', min_sample_split = 2, max_depth = None, num_of_feature_on_split = None, ccp_alpha = 0):
+        self.ccp_alpha = ccp_alpha
         self.max_depth = max_depth
         self.min_sample_split = min_sample_split
         self.criterion_type = criterion
@@ -26,18 +27,25 @@ class DecisionTreeClassifier:
     def fit(self, X, Y, categorical_column = []):
         Y = np.resize(Y, (len(Y), 1))
         dataset = np.append(X, Y, axis=1)
-        self.root = self.__decision_tree_learning(dataset, 0, categorical_column)
+        all_classes_value = np.unique(Y)
+        if self.ccp_alpha == 0:
+            self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+        else:
+            root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+            #ccp_tree = 
+            #while ccp_tree > self.ccp:
+            pass
 
-    def __decision_tree_learning(self, dataset, current_depth, categorical_column):
+    def __decision_tree_learning(self, dataset, current_depth, categorical_column, all_classes_value):
         #split in X, Y
         X = dataset[:,:-1]
         Y = dataset[:,-1]
         #criterion value of this node
         criterion_value = self.criterion_function(Y)
         #value for this node
-        class_value, counts = self.plurality_value(Y)
+        class_value, counts = self.plurality_value(Y, all_classes_value)
         #Select num_of_feature_on_split from the possible features
-        if len(X) >= self.min_sample_split and current_depth < self.max_depth:
+        if len(X) >= self.min_sample_split and current_depth < self.max_depth and criterion_value > 0:
             number_of_features = len(X[0])
             feature_selected_indexes = self.__select_features(number_of_features)
             #Find the best split from the selected features (considering if they are categorical or numerical)
@@ -63,7 +71,7 @@ class DecisionTreeClassifier:
                     #Aggiungere i campi che mancano
                     n.children[feat_val] = nn
                 else:
-                    nn = self.__decision_tree_learning(splitted_dataset[feat_val], current_depth + 1, categorical_column)
+                    nn = self.__decision_tree_learning(splitted_dataset[feat_val], current_depth + 1, categorical_column,all_classes_value)
                     n.children[feat_val] = nn
             #return a node with as children the different node from the different call
             return n
@@ -146,9 +154,17 @@ class DecisionTreeClassifier:
         else:
             return gini
 
-    def plurality_value(self, Y):
-        classes, counts = np.unique(Y, return_counts=True)
-        return classes[np.where(counts == np.amax(counts))][0], counts
+    def plurality_value(self, Y, all_classes_value):
+        max = -1
+        counts = []
+        class_value = None
+        for clc in all_classes_value:
+            n = len([x for x in Y if x == clc])
+            counts.append(n)
+            if n >= max:
+                max = n
+                class_value = clc
+        return class_value, counts
 
     def predict(self, X):
         if self.root == None:
@@ -173,6 +189,8 @@ class DecisionTreeClassifier:
                     node = node.children['right']
         return node.class_value
 
+    def calculate_ccp(self, root, a):
+        pass
 
 #Split criterions
 def gini(y):
@@ -187,26 +205,35 @@ def entropy(y):
     entropy = 0
     classes = np.unique(y)
     for cls in classes:
-        p_cls = len(y[y == cls]) / len(y)    #check if is ok
+        p_cls = len(y[y == cls]) / len(y)
         entropy += -p_cls * np.log2(p_cls)
     return entropy
 
-def create_graphviz_tree(root, title):
-    dot = gv.Digraph(comment=title)
-    recursive_graph(dot, root, 0)
+def create_graphviz_tree(root, title, criterion_name, features_name):
+    dot = gv.Digraph(comment=title, node_attr={ 'shape':'box', 'style':"filled, rounded", 'color':"lightblue", 'fontname':"helvetica" })
+    recursive_graph(dot, root, 0, criterion_name, features_name)
     return dot
 
-def recursive_graph(dot, root, myindex):
+def recursive_graph(dot, root, myindex, criterion_name, features_name):
     if root.feature_type == 'leaf':
         myindex += 1
-        dot.node(str(myindex), 'class = ' + str(root.class_value))
+        s = 'type={type}\n\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type, criterion = criterion_name,criterion_value = str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
+        dot.node(str(myindex),s)
         return myindex, myindex
     else:
         myindex += 1
-        dot.node(str(myindex), 'feature = ' + str(root.feature))
+        if root.feature_type == 'categorical':
+            s = '{feature_name} = ?\n\ntype={type}\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type,criterion = criterion_name, feature_name = features_name[root.feature], criterion_value =str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
+            dot.node(str(myindex),s)
+        elif root.feature_type == 'numerical':
+            s = '{feature_name}<={feature_value}\n\ntype={type}\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type, feature_name = features_name[root.feature], criterion = criterion_name, feature_value = root.feature_value,criterion_value = str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
+            dot.node(str(myindex),s)
+        else:
+            s = 'type={type}\n\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type, criterion = criterion_name,criterion_value = str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
+            dot.node(str(myindex),s)
         lastindex = myindex
         for node in root.children.keys():
-            index, lastindex = recursive_graph(dot, root.children[node], lastindex)
+            index, lastindex = recursive_graph(dot, root.children[node], lastindex, criterion_name, features_name)
             dot.edge(str(myindex), str(index))
         return myindex, lastindex
 

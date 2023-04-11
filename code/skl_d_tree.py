@@ -34,7 +34,6 @@ y_pred_test = dt.predict(x_test)
 
 #Graph
 graph = da.create_graphviz(df, dt, classes_feature_name)
-graph.view()
 
 ############################# TRAIN ####################################
 #confusion Matrix and classification report

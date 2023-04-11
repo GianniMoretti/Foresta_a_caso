@@ -1,6 +1,7 @@
 import numpy as np
 import random as rn
 import graphviz as gv
+from sklearn.utils import resample
 
 class Node:
     def __init__(self, feature = None, feature_type = 'numerical', feature_value = None, criterior_value = None):
@@ -14,8 +15,8 @@ class Node:
         self.class_value = None
 
 class DecisionTreeClassifier:
-    def __init__(self, criterion = 'gini', min_sample_split = 2, max_depth = None, num_of_feature_on_split = None, ccp_alpha = 0):
-        self.ccp_alpha = ccp_alpha
+    def __init__(self, criterion = 'gini', min_sample_split = 2, max_depth = None, num_of_feature_on_split = None):
+        #self.ccp_alpha = ccp_alpha
         self.max_depth = max_depth
         self.min_sample_split = min_sample_split
         self.criterion_type = criterion
@@ -28,13 +29,14 @@ class DecisionTreeClassifier:
         Y = np.resize(Y, (len(Y), 1))
         dataset = np.append(X, Y, axis=1)
         all_classes_value = np.unique(Y)
-        if self.ccp_alpha == 0:
-            self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
-        else:
-            root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
-            #ccp_tree = 
-            #while ccp_tree > self.ccp:
-            pass
+        self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+        # if self.ccp_alpha == 0:
+        #     self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+        # else:
+        #     root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+        #     #ccp_tree = 
+        #     #while ccp_tree > self.ccp:
+        #     pass
 
     def __decision_tree_learning(self, dataset, current_depth, categorical_column, all_classes_value):
         #split in X, Y
@@ -43,7 +45,7 @@ class DecisionTreeClassifier:
         #criterion value of this node
         criterion_value = self.criterion_function(Y)
         #value for this node
-        class_value, counts = self.plurality_value(Y, all_classes_value)
+        class_value, counts = self.__plurality_value(Y, all_classes_value)
         #Select num_of_feature_on_split from the possible features
         if len(X) >= self.min_sample_split and current_depth < self.max_depth and criterion_value > 0:
             number_of_features = len(X[0])
@@ -154,7 +156,7 @@ class DecisionTreeClassifier:
         else:
             return gini
 
-    def plurality_value(self, Y, all_classes_value):
+    def __plurality_value(self, Y, all_classes_value):
         max = -1
         counts = []
         class_value = None
@@ -189,15 +191,59 @@ class DecisionTreeClassifier:
                     node = node.children['right']
         return node.class_value
 
-    def calculate_ccp(self, root, a):
-        pass
+class RandomForestClassifier:
+    def __init__(self, tree_num = 10, max_samples = None ,criterion = 'gini', min_sample_split = 2, max_depth = None, num_of_feature_on_split = None):
+        self.tree_num = tree_num
+        self.max_depth = max_depth
+        self.max_samples = max_samples
+        self.min_sample_split = min_sample_split
+        self.criterion_type = criterion
+        self.num_of_feature_on_split = int(num_of_feature_on_split)
+        self.forest = []
+    
+    def fit(self, X, Y, categorical_column = []):
+        l = len(X)
+        if self.max_samples != None:
+            l = int(l * self.max_samples)
+        for i in range(self.tree_num):     
+            XB, YB = self.__resample(X, Y, True, l)
+            mdt = DecisionTreeClassifier(self.criterion_type, self.min_sample_split, self.max_depth, self.num_of_feature_on_split)
+            mdt.fit(XB, YB, categorical_column = categorical_column)
+            self.forest.append(mdt)
+
+    def predict(self, X):
+        y_pred = []
+        for row in X:
+            y_values = []
+            for t in self.forest:
+                li = [row]
+                y_values.append(t.predict(li))
+            y_pred.append(self.__most_frequent(y_values))
+        return y_pred
+            
+    def __most_frequent(self, classes):
+        values, counts = np.unique(classes, return_counts=True)
+        ind = list(counts).index(max(counts))
+        return values[ind]
+    
+    def __resample(self, X, Y, replace = True, samples_num = -1):
+        indexes = list(range(0, len(X)))
+        if samples_num == -1:
+            samples_num = len(X)
+        if replace:
+            selected_index = rn.choices(indexes, k = samples_num)
+        else:
+            selected_index = rn.sample(indexes, k = samples_num)
+        
+        return X[selected_index], Y[selected_index]
+
 
 #Split criterions
 def gini(y):
     gini_index = 0
     classes = np.unique(y)
     for cls in classes:
-        p_cls = len(y[y == cls]) / len(y)    #check if is ok
+        p_cls = len(y[y == cls]) / len(y)
         gini_index += p_cls * (1 - p_cls)
     return gini_index
 

@@ -2,21 +2,21 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
-from mylib.treelerning import DecisionTreeClassifier as MyDecisionTreeClassifier, create_graphviz_tree
+from mylib.treelerning import RandomForestClassifier as MyRandomForestClassifier
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
-label_name = ['poisonous', 'cap_shape', 'cap_surface', 'cap_color', 'bruises', 'odor', 'gill_attachment', 'gill_spacing', 'gill_size', 'gill_color', 'stalk_shape', 'stalk_root', 'stalk_surface_above_ring', 'stalk_surface_below_ring', 'stalk_color_above_ring', 'stalk_color_below_ring', 'veil_type', 'veil_color', 'ring_number', 'ring_type', 'spore_print_color', 'population', 'habitat']
-dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"
-classes_feature_name = "poisonous"
-categorical_column = list(range(0, len(label_name)))
+label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
+dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
+classes_feature_name = 'risknum'
+categorical_column = [2,5,6,8,10,11,12]
 criterion_type = 'gini'
 
 #read from UCI database with pandas
 df = pd.read_csv(dataframe_name, names = label_name)
 
 #Delete the row with missing value
-df = df[df.stalk_root != '?']
+df = df.where(df != '?')
 
 #split data in x and y
 x, y = da.split_x_y(df, classes_feature_name)
@@ -25,14 +25,10 @@ x, y = da.split_x_y(df, classes_feature_name)
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
 
 #My decision tree classifier
-mdt = MyDecisionTreeClassifier(criterion_type, 2, 3, 4)
-mdt.fit(x_train, y_train, categorical_column = categorical_column)
-y_pred_train = mdt.predict(x_train)
-y_pred_test = mdt.predict(x_test)
-
-#Graph
-g = create_graphviz_tree(mdt.root, 'example', criterion_type, label_name)
-g.view()
+mrf = MyRandomForestClassifier(10, 1, criterion_type, 2, 4, 4)
+mrf.fit(x_train, y_train, categorical_column = categorical_column)
+y_pred_train = mrf.predict(x_train)
+y_pred_test = mrf.predict(x_test)
 
 ############################# TRAIN ####################################
 #confusion Matrix and classification report

@@ -9,10 +9,11 @@ from prettytable import PrettyTable
 def value_of_features(dataframe, head = False):
     data = []
     t = PrettyTable(['Feature Name', 'Count', 'Value', 'Null Count'])
+    dataframer = dataframe.replace({'?': None})
     features_num = 1
     for column in dataframe:
         row = []
-        null_value = dataframe[column].isnull().sum()
+        null_value = dataframer[column].isnull().sum()
         unique_vals = np.unique(dataframe[column])
         if not head:
             row.append(features_num)

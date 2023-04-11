@@ -1,19 +1,38 @@
 
 --------------------------------------------------------------------------------------
-LENSES
+MUSHROOM
 
-https://archive.ics.uci.edu/ml/machine-learning-databases/lenses/lenses.data
+https://archive-beta.ics.uci.edu/dataset/73/mushroom
 
---9 rules cover the training set.
-    -- 3 Classes
-     1 : the patient should be fitted with hard contact lenses,
-     2 : the patient should be fitted with soft contact lenses,
-     3 : the patient should not be fitted with contact lenses.
+     0. poisonous                 edible=e, poisonous=p
+     1. cap-shape:                bell=b,conical=c,convex=x,flat=f, knobbed=k,sunken=s
+     2. cap-surface:              fibrous=f,grooves=g,scaly=y,smooth=s
+     3. cap-color:                brown=n,buff=b,cinnamon=c,gray=g,green=r, pink=p,purple=u,red=e,white=w,yellow=y
+     4. bruises?:                 bruises=t,no=f
+     5. odor:                     almond=a,anise=l,creosote=c,fishy=y,foul=f, musty=m,none=n,pungent=p,spicy=s
+     6. gill-attachment:          attached=a,descending=d,free=f,notched=n
+     7. gill-spacing:             close=c,crowded=w,distant=d
+     8. gill-size:                broad=b,narrow=n
+     9. gill-color:               black=k,brown=n,buff=b,chocolate=h,gray=g, green=r,orange=o,pink=p,purple=u,red=e, white=w,yellow=y
+    10. stalk-shape:              enlarging=e,tapering=t
+    11. stalk-root:               bulbous=b,club=c,cup=u,equal=e, rhizomorphs=z,rooted=r,missing=?
+    12. stalk-surface-above-ring: fibrous=f,scaly=y,silky=k,smooth=s
+    13. stalk-surface-below-ring: fibrous=f,scaly=y,silky=k,smooth=s
+    14. stalk-color-above-ring:   brown=n,buff=b,cinnamon=c,gray=g,orange=o, pink=p,red=e,white=w,yellow=y
+    15. stalk-color-below-ring:   brown=n,buff=b,cinnamon=c,gray=g,orange=o, pink=p,red=e,white=w,yellow=y
+    16. veil-type:                partial=p,universal=u
+    17. veil-color:               brown=n,orange=o,white=w,yellow=y
+    18. ring-number:              none=n,one=o,two=t
+    19. ring-type:                cobwebby=c,evanescent=e,flaring=f,large=l, none=n,pendant=p,sheathing=s,zone=z
+    20. spore-print-color:        black=k,brown=n,buff=b,chocolate=h,green=r, orange=o,purple=u,white=w,yellow=y
+    21. population:               abundant=a,clustered=c,numerous=n, scattered=s,several=v,solitary=y
+    22. habitat:                  grasses=g,leaves=l,meadows=m,paths=p, urban=u,waste=w,woods=d
 
-    1. age of the patient: (1) young, (2) pre-presbyopic, (3) presbyopic
-    2. spectacle prescription:  (1) myope, (2) hypermetrope
-    3. astigmatic:     (1) no, (2) yes
-    4. tear production rate:  (1) reduced, (2) normal
+label_name = ['poisonous', 'cap_shape', 'cap_surface', 'cap_color', 'bruises', 'odor', 'gill_attachment', 'gill_spacing', 'gill_size', 'gill_color', 'stalk_shape', 'stalk_root', 'stalk_surface_above_ring', 'stalk_surface_below_ring', 'stalk_color_above_ring', 'stalk_color_below_ring', 'veil_type', 'veil_color', 'ring_number', 'ring_type', 'spore_print_color', 'population', 'habitat']
+dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"
+classes_feature_name = "poisonous"
+categorical_column = list(range(0, len(label_name)))
+criterion_type = 'gini'
 
 ---------------------------------------------------------------------------------------
 IRIS
@@ -30,7 +49,6 @@ https://archive-beta.ics.uci.edu/dataset/53/iris
       -- Iris Virginica
 
 label_name = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
-delete_this_row = []
 dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
 classes_feature_name = 'species'
 categorical_column = []

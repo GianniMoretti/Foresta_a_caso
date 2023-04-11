@@ -2,6 +2,7 @@ import numpy as np
 import random as rn
 import graphviz as gv
 from sklearn.utils import resample
+from tqdm import tqdm
 
 class Node:
     def __init__(self, feature = None, feature_type = 'numerical', feature_value = None, criterior_value = None):
@@ -30,13 +31,6 @@ class DecisionTreeClassifier:
         dataset = np.append(X, Y, axis=1)
         all_classes_value = np.unique(Y)
         self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
-        # if self.ccp_alpha == 0:
-        #     self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
-        # else:
-        #     root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
-        #     #ccp_tree = 
-        #     #while ccp_tree > self.ccp:
-        #     pass
 
     def __decision_tree_learning(self, dataset, current_depth, categorical_column, all_classes_value):
         #split in X, Y
@@ -182,6 +176,8 @@ class DecisionTreeClassifier:
         while node.feature_type != 'leaf':
             if node.feature_type == 'categorical':
                 feature_val = row[node.feature]
+                if feature_val not in node.children.keys():
+                    return node.class_value                                        #Non è del tutto giusto
                 node = node.children[feature_val]
             else:
                 feature_val = row[node.feature]
@@ -202,14 +198,17 @@ class RandomForestClassifier:
         self.forest = []
     
     def fit(self, X, Y, categorical_column = []):
+        print('RANDOM FOREST\n----------------------------------------------------------')
         l = len(X)
         if self.max_samples != None:
             l = int(l * self.max_samples)
-        for i in range(self.tree_num):     
+        print('Fertilizing the field...')
+        for i in tqdm(range(0, self.tree_num), ncols = 100, desc ="Planting trees: "):    
             XB, YB = self.__resample(X, Y, True, l)
             mdt = DecisionTreeClassifier(self.criterion_type, self.min_sample_split, self.max_depth, self.num_of_feature_on_split)
             mdt.fit(XB, YB, categorical_column = categorical_column)
             self.forest.append(mdt)
+        print('Forest done.\n')
 
     def predict(self, X):
         y_pred = []

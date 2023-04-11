@@ -11,7 +11,9 @@ classes_feature_name = "poisonous"
 df = pd.read_csv(dataframe_name, names = label_name)
 
 #Delete the row with missing value
-df = df.where(df != '?')
+for col in df.columns:
+    df = df[df[col] != '?']
+
 print("\n\n")
 
 #Number of value per features

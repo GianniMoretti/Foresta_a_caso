@@ -6,17 +6,18 @@ from mylib.treelerning import DecisionTreeClassifier as MyDecisionTreeClassifier
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
-label_name = ['poisonous', 'cap_shape', 'cap_surface', 'cap_color', 'bruises', 'odor', 'gill_attachment', 'gill_spacing', 'gill_size', 'gill_color', 'stalk_shape', 'stalk_root', 'stalk_surface_above_ring', 'stalk_surface_below_ring', 'stalk_color_above_ring', 'stalk_color_below_ring', 'veil_type', 'veil_color', 'ring_number', 'ring_type', 'spore_print_color', 'population', 'habitat']
-dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data"
-classes_feature_name = "poisonous"
-categorical_column = list(range(0, len(label_name)))
+label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
+dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
+classes_feature_name = 'risknum'
+categorical_column = [2,5,6,8,10,11,12]
 criterion_type = 'gini'
 
 #read from UCI database with pandas
 df = pd.read_csv(dataframe_name, names = label_name)
 
 #Delete the row with missing value
-df = df[df.stalk_root != '?']
+for col in df.columns:
+    df = df[df[col] != '?']
 
 #split data in x and y
 x, y = da.split_x_y(df, classes_feature_name)

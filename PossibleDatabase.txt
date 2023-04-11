@@ -76,7 +76,6 @@ Only 14 attributes used:
       14. #58 (num)       (the predicted attribute)
 
 label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
-delete_this_row = [87,166,192,266,287,302]
 dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
 classes_feature_name = 'risknum'
 categorical_column = [2,5,6,8,10,11,12]

@@ -6,17 +6,18 @@ from mylib.treelerning import RandomForestClassifier as MyRandomForestClassifier
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
-label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
-dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
-classes_feature_name = 'risknum'
-categorical_column = [2,5,6,8,10,11,12]
+label_name = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
+dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+classes_feature_name = 'species'
+categorical_column = []
 criterion_type = 'gini'
 
 #read from UCI database with pandas
 df = pd.read_csv(dataframe_name, names = label_name)
 
 #Delete the row with missing value
-df = df.where(df != '?')
+for col in df.columns:
+    df = df[df[col] != '?']
 
 #split data in x and y
 x, y = da.split_x_y(df, classes_feature_name)
@@ -25,7 +26,7 @@ x, y = da.split_x_y(df, classes_feature_name)
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
 
 #My decision tree classifier
-mrf = MyRandomForestClassifier(10, 1, criterion_type, 2, 4, 4)
+mrf = MyRandomForestClassifier(tree_num=100, max_samples=1, criterion=criterion_type, min_sample_split=2, max_depth=3, num_of_feature_on_split=3) 
 mrf.fit(x_train, y_train, categorical_column = categorical_column)
 y_pred_train = mrf.predict(x_train)
 y_pred_test = mrf.predict(x_test)

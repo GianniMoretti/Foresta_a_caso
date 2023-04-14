@@ -9,6 +9,7 @@ from mylib.treelerning import RandomForestClassifier as MyRandomForestClassifier
 
 
 ########################### MAIN ############################
+#Parametri da cambiare per utilizzare un database diverso
 label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
 dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
 classes_feature_name = 'risknum'
@@ -26,7 +27,7 @@ for col in df.columns:
 x, y = da.split_x_y(df, classes_feature_name)
 
 #number of iteration per value
-N_p_value = 1
+N_p_value = 3
 
 my_accuracy_train = []
 skl_accuracy_train = []
@@ -34,7 +35,7 @@ my_accuracy_test = []
 skl_accuracy_test = []
 values = []
 
-for value in range(1,10):
+for value in range(1, 100, 5):
     sum_train_my = 0
     sum_train_skl = 0
     sum_test_my = 0
@@ -52,13 +53,13 @@ for value in range(1,10):
         x_test_skl = da.oneHotEncoding(tmp_test, label_feature_name, categorical_column)
 
         #SKlearn random forest
-        skrf = RandomForestClassifier(n_estimators=100, criterion=criterion_type, max_depth=value, min_samples_split=2, max_features=2) 
+        skrf = RandomForestClassifier(n_estimators=value, criterion=criterion_type, max_depth=2, min_samples_split=2, max_features=2) 
         skrf.fit(x_train_skl, y_train)
         y_pred_train_skl = skrf.predict(x_train_skl)
         y_pred_test_skl = skrf.predict(x_test_skl)
 
         #My decision tree classifier
-        mrf = MyRandomForestClassifier(tree_num=100, max_samples=1, criterion=criterion_type, min_sample_split=2, max_depth=value, num_of_feature_on_split=2) 
+        mrf = MyRandomForestClassifier(tree_num=value, max_samples=1, criterion=criterion_type, min_sample_split=2, max_depth=2, num_of_feature_on_split=2) 
         mrf.fit(x_train, y_train, categorical_column = categorical_column)
         y_pred_train = mrf.predict(x_train)
         y_pred_test = mrf.predict(x_test)
@@ -77,18 +78,18 @@ for value in range(1,10):
 
 
 plt.subplot(1, 2, 1)
-plt.ylim([0, 1.05])
+plt.ylim([0.8, 1.05])
 plt.title("Train")
-plt.xlabel("Sample Number")
+plt.xlabel("tree number")
 plt.ylabel("Accuracy")
 plt.plot(values, my_accuracy_train, color='blue', label='My_RF')
 plt.plot(values, skl_accuracy_train, color='red', label='Skl_RF')
 plt.legend()
 
 plt.subplot(1, 2, 2)
-plt.ylim([0, 1.05])
+plt.ylim([0.8, 1.05])
 plt.title("Test")
-plt.xlabel("Sample Number")
+plt.xlabel("Tree number")
 plt.ylabel("Accuracy")
 plt.plot(values, my_accuracy_test, color='blue', label='My_RF')
 plt.plot(values, skl_accuracy_test, color='red', label='Skl_RF')

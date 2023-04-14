@@ -35,22 +35,32 @@ my_accuracy_test = []
 skl_accuracy_test = []
 values = []
 
-for value in range(1, 100, 5):
+for value in range(1, 100, 10):
     sum_train_my = 0
     sum_train_skl = 0
     sum_test_my = 0
     sum_test_skl = 0
 
     for i in range(N_p_value):
+
         #Splitting the dataset
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
 
         #One-hot-Encoding for sklearn
-        label_feature_name = label_name[:-1]                     #Name of the attributes whitout class label name
+        label_feature_name = label_name [1:]                    #Name of the attributes whitout class label name
         tmp_train = pd.DataFrame(x_train, columns = label_feature_name)
-        x_train_skl = da.oneHotEncoding(tmp_train, label_feature_name, categorical_column)
+        x_train_skl = da.oneHotEncoding(tmp_train, label_name, categorical_column)
         tmp_test = pd.DataFrame(x_test, columns = label_feature_name)
-        x_test_skl = da.oneHotEncoding(tmp_test, label_feature_name, categorical_column)
+        x_test_skl = da.oneHotEncoding(tmp_test, label_name, categorical_column)
+
+        while len(x_train_skl.columns) != len(x_test_skl.columns):
+            #Splitting the dataset
+            x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
+            label_feature_name = label_name[:-1]                     #Name of the attributes whitout class label name
+            tmp_train = pd.DataFrame(x_train, columns = label_feature_name)
+            x_train_skl = da.oneHotEncoding(tmp_train, label_name, categorical_column)
+            tmp_test = pd.DataFrame(x_test, columns = label_feature_name)
+            x_test_skl = da.oneHotEncoding(tmp_test, label_name, categorical_column)
 
         #SKlearn random forest
         skrf = RandomForestClassifier(n_estimators=value, criterion=criterion_type, max_depth=2, min_samples_split=2, max_features=2) 
@@ -66,7 +76,6 @@ for value in range(1, 100, 5):
 
         sum_train_my += accuracy_score(y_train, y_pred_train)
         sum_test_my += accuracy_score(y_test, y_pred_test)
-
         sum_train_skl += accuracy_score(y_train, y_pred_train_skl)
         sum_test_skl += accuracy_score(y_test, y_pred_test_skl)
 
@@ -78,7 +87,7 @@ for value in range(1, 100, 5):
 
 
 plt.subplot(1, 2, 1)
-plt.ylim([0.8, 1.05])
+plt.ylim([0, 1.01])
 plt.title("Train")
 plt.xlabel("tree number")
 plt.ylabel("Accuracy")
@@ -87,7 +96,7 @@ plt.plot(values, skl_accuracy_train, color='red', label='Skl_RF')
 plt.legend()
 
 plt.subplot(1, 2, 2)
-plt.ylim([0.8, 1.05])
+plt.ylim([0, 1.01])
 plt.title("Test")
 plt.xlabel("Tree number")
 plt.ylabel("Accuracy")

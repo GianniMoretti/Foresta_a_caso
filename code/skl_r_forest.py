@@ -5,10 +5,10 @@ from sklearn.ensemble import RandomForestClassifier
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
-label_name = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'species']
-dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
-classes_feature_name = 'species'
-categorical_column = []
+label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
+dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
+classes_feature_name = 'risknum'
+categorical_column = [2,6,10,11,12]
 criterion_type = 'gini'
 
 #read from UCI database with pandas

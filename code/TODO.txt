@@ -1,3 +1,0 @@
-1. pruning
-2. my vs skl tree visualizzation
-3. my random forest

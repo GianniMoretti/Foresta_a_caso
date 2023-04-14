@@ -2,6 +2,7 @@ import numpy as np
 import seaborn as snb
 import matplotlib.pyplot as plt
 import graphviz as gv
+import pandas as pd
 from sklearn.tree import export_graphviz
 from sklearn.preprocessing import MinMaxScaler
 from prettytable import PrettyTable
@@ -90,3 +91,12 @@ def split_x_y(dataframe, classname):
     y = dataframe[classname].values
 
     return x,y
+
+def oneHotEncoding(df, label_name, categorical_column):
+    prefix = [ label_name[indx] for indx in categorical_column ]
+    for p in prefix:
+        df_p = pd.get_dummies(df[p], prefix=p)
+        df = df.drop(columns=[p])
+        df = pd.concat([df, df_p], axis=1)
+
+    return df

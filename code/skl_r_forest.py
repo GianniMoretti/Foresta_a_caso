@@ -1,9 +1,7 @@
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-
-from mylib.treelerning import DecisionTreeClassifier as MyDecisionTreeClassifier, create_graphviz_tree
+from sklearn.ensemble import RandomForestClassifier
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
@@ -27,17 +25,13 @@ df = da.oneHotEncoding(df, label_name=label_name, categorical_column=categorical
 x, y = da.split_x_y(df, classes_feature_name)
 
 #Splitting the dataset
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
 
-#DecisionTreeClassifier Sklearn
-dt = DecisionTreeClassifier(criterion=criterion_type, max_depth=3, random_state = None)
-dt.fit(x_train, y_train)
-y_pred_train = dt.predict(x_train)
-y_pred_test = dt.predict(x_test)
-
-#Graph
-graph = da.create_graphviz(df, dt, classes_feature_name)
-graph.view()
+#My decision tree classifier
+skrf = RandomForestClassifier(n_estimators=100, criterion=criterion_type, max_depth=3, min_samples_split=2, max_features=4) 
+skrf.fit(x_train, y_train)
+y_pred_train = skrf.predict(x_train)
+y_pred_test = skrf.predict(x_test)
 
 ############################# TRAIN ####################################
 #confusion Matrix and classification report
@@ -47,11 +41,10 @@ da.plot_confusion_matix(mc, lbl, "Cunfusion Matrix Train")
 print("TRAIN DATA REPORT\n---------------------------------------------------------------------")
 print(classification_report(y_train, y_pred_train, zero_division=0))
 
-############################# TEST ####################################
+############################# TEST #####################################
 #confusion Matrix and classification report
 mc, lbl = da.confusion_matrix(y_test ,y_pred_test)
 da.plot_confusion_matix(mc, lbl, "Cunfusion Matrix Test")
 
-print("TEST DATA REPORT\n---------------------------------------------------------------------")
+print("TEST DATA REPORT\n----------------------------------------------------------------------")
 print(classification_report(y_test, y_pred_test, zero_division=0))
-

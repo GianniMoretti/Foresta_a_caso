@@ -78,10 +78,9 @@ Only 14 attributes used:
 label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
 dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
 classes_feature_name = 'risknum'
-categorical_column = [2,5,6,8,10,11,12]
+categorical_column = [2,6,10,11,12]
 criterion_type = 'gini'
 
--------------------------------------------------------------------------------------------
-REQUIREMENTS
+------------------------------------------------------------------------------------------
 
-python3 -m pip install -U prettytable   ----->     https://pypi.org/project/prettytable/
+More information UCI website: https://archive-beta.ics.uci.edu/

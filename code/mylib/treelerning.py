@@ -46,6 +46,11 @@ class DecisionTreeClassifier:
             feature_selected_indexes = self.__select_features(number_of_features)
             #Find the best split from the selected features (considering if they are categorical or numerical)
             best_split = self.__find_best_split(dataset, criterion_value, len(X), feature_selected_indexes, categorical_column)
+            while len(best_split) == 0:
+                feature_selected_indexes = self.__select_features(number_of_features)
+                #Find the best split from the selected features (considering if they are categorical or numerical)
+                best_split = self.__find_best_split(dataset, criterion_value, len(X), feature_selected_indexes, categorical_column)
+                #if the samples have the same value in all the column, this cycle go forever!!!! 
             #create this node
             if best_split['type'] == 'categorical':
                 n = Node(best_split['feature_index'], 'categorical', None, criterion_value)
@@ -219,7 +224,7 @@ class RandomForestClassifier:
                 y_values.append(t.predict(li))
             y_pred.append(self.__most_frequent(y_values))
         return y_pred
-            
+    
     def __most_frequent(self, classes):
         values, counts = np.unique(classes, return_counts=True)
         ind = list(counts).index(max(counts))

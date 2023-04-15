@@ -47,7 +47,7 @@ for value in range(1, 100, 10):
         x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
 
         #One-hot-Encoding for sklearn
-        label_feature_name = label_name [1:]                    #Name of the attributes whitout class label name
+        label_feature_name = label_name[:-1]                    #Name of the attributes whitout class label name
         tmp_train = pd.DataFrame(x_train, columns = label_feature_name)
         x_train_skl = da.oneHotEncoding(tmp_train, label_name, categorical_column)
         tmp_test = pd.DataFrame(x_test, columns = label_feature_name)

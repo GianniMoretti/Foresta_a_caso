@@ -3,6 +3,7 @@ import random as rn
 import graphviz as gv
 from sklearn.utils import resample
 from tqdm import tqdm
+import multiprocessing
 
 class Node:
     def __init__(self, feature = None, feature_type = 'numerical', feature_value = None, criterior_value = None):
@@ -107,8 +108,12 @@ class DecisionTreeClassifier:
                 #numerical features
                 possible_value = np.unique(dataset[:,feature])
                 np.sort(possible_value)
-                threshold_value = self.__find_threshold_value(possible_value)
-                for value in threshold_value:
+                threshold_values = self.__find_threshold_value(possible_value)
+                step = 1
+                if len(threshold_values) > 100:
+                    step = int(len(threshold_values) / 100)
+                for i in range(0, len(threshold_values), step):
+                    value = threshold_values[i]
                     dts = self.__split_dataset_numerical(dataset, feature, value)
                     dt_left = dts['left']
                     dt_right = dts['right']
@@ -132,13 +137,18 @@ class DecisionTreeClassifier:
 
     def __split_dataset_categorical(self, dataset, feature, possible_value):
         result = {}
-        for value in possible_value:
-            result[value] = np.array([row for row in dataset if row[feature] == value])
+        column = dataset[:,feature]
+        for value in possible_value:            
+            mask = column == value
+            result[value] = dataset[mask]
+            #result[value] = np.array([row for row in dataset if row[feature] == value])
         return result
 
     def __split_dataset_numerical(self, dataset, feature, threshold_value):
-        dataset_left = np.array([row for row in dataset if row[feature] <= threshold_value])
-        dataset_right = np.array([row for row in dataset if row[feature] > threshold_value])
+        column = dataset[:, feature]
+        mask = column < threshold_value
+        dataset_left = dataset[mask]
+        dataset_right = dataset[~mask]
         return {'left': dataset_left, 'right': dataset_right}
 
     def __select_features(self, num_of_features):

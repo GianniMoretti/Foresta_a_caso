@@ -23,10 +23,10 @@ for col in df.columns:
 x, y = da.split_x_y(df, classes_feature_name)
 
 #Splitting the dataset
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, test_size=0.3)
 
 #My decision tree classifier
-mdt = MyDecisionTreeClassifier(criterion_type, 2, 3, 4)
+mdt = MyDecisionTreeClassifier(criterion_type, 2, 4, -1)
 mdt.fit(x_train, y_train, categorical_column = categorical_column)
 y_pred_train = mdt.predict(x_train)
 y_pred_test = mdt.predict(x_test)

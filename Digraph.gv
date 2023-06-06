@@ -1,0 +1,235 @@
+// example
+digraph {
+	node [color=lightblue fontname=helvetica shape=box style="filled, rounded"]
+	1 [label="Elevation<=3044.5
+
+type=numerical
+gini=0.623
+sample=406708
+count=[147936, 198593, 25049, 1947, 6700, 12112, 14371]
+class=2"]
+	2 [label="Elevation<=2510.5
+
+type=numerical
+gini=0.553
+sample=235984
+count=[40204, 149916, 25049, 1947, 6700, 12112, 56]
+class=2"]
+	3 [label="Horizontal_Distance_To_Hydrology<=15.0
+
+type=numerical
+gini=0.582
+sample=30043
+count=[6, 2361, 17235, 1945, 85, 8411, 0]
+class=3"]
+	4 [label="Wilderness_Area3 = ?
+
+type=categorical
+gini=0.714
+sample=2195
+count=[6, 194, 561, 781, 8, 645, 0]
+class=4"]
+	5 [label="type=leaf
+
+gini=0.654
+sample=1597
+count=[0, 144, 459, 781, 8, 205, 0]
+class=4"]
+	4 -> 5
+	6 [label="type=leaf
+
+gini=0.422
+sample=598
+count=[6, 50, 102, 0, 0, 440, 0]
+class=6"]
+	4 -> 6
+	3 -> 4
+	7 [label="Elevation<=2435.5
+
+type=numerical
+gini=0.556
+sample=27848
+count=[0, 2167, 16674, 1164, 77, 7766, 0]
+class=3"]
+	8 [label="type=leaf
+
+gini=0.512
+sample=21328
+count=[0, 626, 13608, 1160, 0, 5934, 0]
+class=3"]
+	7 -> 8
+	9 [label="type=leaf
+
+gini=0.644
+sample=6520
+count=[0, 1541, 3066, 4, 77, 1832, 0]
+class=3"]
+	7 -> 9
+	3 -> 7
+	2 -> 3
+	10 [label="Soil_Type4 = ?
+
+type=categorical
+gini=0.446
+sample=205941
+count=[40198, 147555, 7814, 2, 6615, 3701, 56]
+class=2"]
+	11 [label="Soil_Type2 = ?
+
+type=categorical
+gini=0.428
+sample=199580
+count=[40063, 145337, 4471, 2, 6207, 3496, 4]
+class=2"]
+	12 [label="type=leaf
+
+gini=0.414
+sample=196596
+count=[40063, 144819, 2500, 2, 6025, 3183, 4]
+class=2"]
+	11 -> 12
+	13 [label="type=leaf
+
+gini=0.519
+sample=2984
+count=[0, 518, 1971, 0, 182, 313, 0]
+class=3"]
+	11 -> 13
+	10 -> 11
+	14 [label="Elevation<=2696.5
+
+type=numerical
+gini=0.597
+sample=6361
+count=[135, 2218, 3343, 0, 408, 205, 52]
+class=3"]
+	15 [label="type=leaf
+
+gini=0.336
+sample=3590
+count=[67, 434, 2886, 0, 20, 183, 0]
+class=3"]
+	14 -> 15
+	16 [label="type=leaf
+
+gini=0.538
+sample=2771
+count=[68, 1784, 457, 0, 388, 22, 52]
+class=2"]
+	14 -> 16
+	10 -> 14
+	2 -> 10
+	1 -> 2
+	17 [label="Elevation<=3318.5
+
+type=numerical
+gini=0.513
+sample=170724
+count=[107732, 48677, 0, 0, 0, 0, 14315]
+class=1"]
+	18 [label="Hillshade_Noon<=239.5
+
+type=numerical
+gini=0.478
+sample=146482
+count=[94511, 47504, 0, 0, 0, 0, 4467]
+class=1"]
+	19 [label="Elevation<=3125.5
+
+type=numerical
+gini=0.447
+sample=111464
+count=[76863, 30846, 0, 0, 0, 0, 3755]
+class=1"]
+	20 [label="type=leaf
+
+gini=0.475
+sample=36266
+count=[22192, 14067, 0, 0, 0, 0, 7]
+class=1"]
+	19 -> 20
+	21 [label="type=leaf
+
+gini=0.419
+sample=75198
+count=[54671, 16779, 0, 0, 0, 0, 3748]
+class=1"]
+	19 -> 21
+	18 -> 19
+	22 [label="Horizontal_Distance_To_Hydrology<=333.0
+
+type=numerical
+gini=0.519
+sample=35018
+count=[17648, 16658, 0, 0, 0, 0, 712]
+class=1"]
+	23 [label="type=leaf
+
+gini=0.497
+sample=19933
+count=[12116, 7261, 0, 0, 0, 0, 556]
+class=1"]
+	22 -> 23
+	24 [label="type=leaf
+
+gini=0.477
+sample=15085
+count=[5532, 9397, 0, 0, 0, 0, 156]
+class=2"]
+	22 -> 24
+	18 -> 22
+	17 -> 18
+	25 [label="Wilderness_Area3 = ?
+
+type=categorical
+gini=0.535
+sample=24242
+count=[13221, 1173, 0, 0, 0, 0, 9848]
+class=1"]
+	26 [label="Horizontal_Distance_To_Hydrology<=296.0
+
+type=numerical
+gini=0.467
+sample=12013
+count=[8182, 772, 0, 0, 0, 0, 3059]
+class=1"]
+	27 [label="type=leaf
+
+gini=0.539
+sample=4449
+count=[2438, 245, 0, 0, 0, 0, 1766]
+class=1"]
+	26 -> 27
+	28 [label="type=leaf
+
+gini=0.389
+sample=7564
+count=[5744, 527, 0, 0, 0, 0, 1293]
+class=1"]
+	26 -> 28
+	25 -> 26
+	29 [label="Soil_Type32 = ?
+
+type=categorical
+gini=0.521
+sample=12229
+count=[5039, 401, 0, 0, 0, 0, 6789]
+class=7"]
+	30 [label="type=leaf
+
+gini=0.435
+sample=8964
+count=[2412, 267, 0, 0, 0, 0, 6285]
+class=7"]
+	29 -> 30
+	31 [label="type=leaf
+
+gini=0.327
+sample=3265
+count=[2627, 134, 0, 0, 0, 0, 504]
+class=1"]
+	29 -> 31
+	25 -> 29
+	17 -> 25
+	1 -> 17
+}

@@ -3,7 +3,8 @@ import random as rn
 import graphviz as gv
 from sklearn.utils import resample
 from tqdm import tqdm
-import multiprocessing
+import cProfile
+from math import floor
 
 class Node:
     def __init__(self, feature = None, feature_type = 'numerical', feature_value = None, criterior_value = None):
@@ -28,19 +29,25 @@ class DecisionTreeClassifier:
 
     #devo riusare gli attributi che ho gia usato o toglierli?
     def fit(self, X, Y, categorical_column = []):
+        profiler = cProfile.Profile()
+        profiler.enable()
         Y = np.resize(Y, (len(Y), 1))
         dataset = np.append(X, Y, axis=1)
         all_classes_value = np.unique(Y)
         self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+            # Ferma il profiler
+        profiler.disable()
+        # Visualizza i risultati del profiler
+        profiler.print_stats()
 
     def __decision_tree_learning(self, dataset, current_depth, categorical_column, all_classes_value):
         #split in X, Y
         X = dataset[:,:-1]
         Y = dataset[:,-1]
-        #criterion value of this node
-        criterion_value = self.criterion_function(Y)
         #value for this node
         class_value, counts = self.__plurality_value(Y, all_classes_value)
+        #criterion value of this node
+        criterion_value = self.criterion_function(counts)
         #Select num_of_feature_on_split from the possible features
         if len(X) >= self.min_sample_split and current_depth < self.max_depth and criterion_value > 0:
             number_of_features = len(X[0])
@@ -97,7 +104,9 @@ class DecisionTreeClassifier:
                 for dt in datasets.values():
                     #Take all the y for every dataset
                     y = dt[:,-1]
-                    info_gain += -(len(y) / num_of_parent_ex) * self.criterion_function(y)
+                    classes, counts = np.unique(y, return_counts=True)
+                    #devi continuare qua
+                    info_gain += -(len(y) / num_of_parent_ex) * self.criterion_function(counts)
                 if info_gain > max_info_gain:
                     max_info_gain = info_gain
                     best_split['feature_index'] = feature
@@ -106,34 +115,40 @@ class DecisionTreeClassifier:
                     best_split['datasets'] = datasets
             else:
                 #numerical features
-                possible_value = np.unique(dataset[:,feature])
-                np.sort(possible_value)
-                threshold_values = self.__find_threshold_value(possible_value)
-                step = 1
-                if len(threshold_values) > 100:
-                    step = int(len(threshold_values) / 100)
-                for i in range(0, len(threshold_values), step):
-                    value = threshold_values[i]
-                    dts = self.__split_dataset_numerical(dataset, feature, value)
-                    dt_left = dts['left']
-                    dt_right = dts['right']
-                    w_l = len(dt_left) / num_of_parent_ex
-                    w_r = len(dt_right) / num_of_parent_ex
-                    info_gain = parent_criterion_value - (w_l * self.criterion_function(dt_left[:,-1]) + w_r * self.criterion_function(dt_right[:,-1]))
-                    if info_gain > max_info_gain:
+                index = dataset[:, feature].argsort()
+                sorted_dataset = dataset[index]
+                split_index = 0
+                dt_lenght = len(dataset)   #forse non serve
+                classes, right_counts = np.unique(sorted_dataset[:,-1], return_counts=True)
+                left_count = np.zeros(len(classes), dtype=int)
+                encoded_cls = encodeLabels(sorted_dataset[:,-1], classes)
+
+                while split_index <= dt_lenght - 2:
+                    index = encoded_cls[split_index]
+                    left_count[index] += 1
+                    right_counts[index] -= 1
+                    split_index += 1
+                    #Da cambiare l'== con un controllo di precisione
+                    while sorted_dataset[split_index - 1, feature] == sorted_dataset[split_index, feature] and split_index <= dt_lenght - 2:
+                        index = encoded_cls[split_index]
+                        left_count[index] += 1
+                        right_counts[index] -= 1
+                        split_index += 1
+
+                    w_l = split_index / num_of_parent_ex
+                    w_r = (dt_lenght - split_index) / num_of_parent_ex
+
+                    info_gain = parent_criterion_value - (w_l * self.criterion_function(left_count) + w_r * self.criterion_function(right_counts))
+
+                    if info_gain >= max_info_gain:
                         max_info_gain = info_gain
                         best_split['feature_index'] = feature
-                        best_split['threshold'] = value
+                        best_split['threshold'] = floor(((sorted_dataset[split_index - 1, feature] + sorted_dataset[split_index, feature]) / 2) * 100) / 100
                         best_split['type'] = 'numerical'
-                        best_split['info_gain'] = info_gain
-                        best_split['datasets'] = dts
+                        best_split['info_gain'] = max_info_gain
+                        #Il problema è qui, l'index dovrebbe essere uno in più ma non puoi fare questo caso perche ti va in index out of bound
+                        best_split['datasets'] = {'left': sorted_dataset[:split_index], 'right': sorted_dataset[split_index:]}
         return best_split
-
-    def __find_threshold_value(self, values):
-        possible_values = []
-        for i in range(0, len(values) - 1):
-            possible_values.append((values[i] + values[i + 1]) / 2)
-        return possible_values
 
     def __split_dataset_categorical(self, dataset, feature, possible_value):
         result = {}
@@ -141,15 +156,7 @@ class DecisionTreeClassifier:
         for value in possible_value:            
             mask = column == value
             result[value] = dataset[mask]
-            #result[value] = np.array([row for row in dataset if row[feature] == value])
         return result
-
-    def __split_dataset_numerical(self, dataset, feature, threshold_value):
-        column = dataset[:, feature]
-        mask = column < threshold_value
-        dataset_left = dataset[mask]
-        dataset_right = dataset[~mask]
-        return {'left': dataset_left, 'right': dataset_right}
 
     def __select_features(self, num_of_features):
         indexes = list(range(0, num_of_features))
@@ -170,7 +177,8 @@ class DecisionTreeClassifier:
         counts = []
         class_value = None
         for clc in all_classes_value:
-            n = len([x for x in Y if x == clc])
+            mask = Y == clc
+            n = len(Y[mask])
             counts.append(n)
             if n >= max:
                 max = n
@@ -251,23 +259,26 @@ class RandomForestClassifier:
         
         return X[selected_index], Y[selected_index]
 
-
-#Split criterions
-def gini(y):
-    gini_index = 0
-    classes = np.unique(y)
-    for cls in classes:
-        p_cls = len(y[y == cls]) / len(y)
-        gini_index += p_cls * (1 - p_cls)
+def gini(counts):
+    tot = np.sum(counts, dtype=int)
+    probabilities = counts / tot
+    gini_index = np.sum(probabilities * (1 - probabilities), dtype=float)
     return gini_index
 
-def entropy(y):
-    entropy = 0
-    classes = np.unique(y)
-    for cls in classes:
-        p_cls = len(y[y == cls]) / len(y)
-        entropy += -p_cls * np.log2(p_cls)
+def entropy(counts):
+    tot = np.sum(counts, dtype=int)
+    probabilities = counts / tot
+    entropy = np.sum(-probabilities * np.log2(probabilities), dtype=float)
     return entropy
+
+def encodeLabels(labels, classes):
+    class_index = {}
+    index = 0
+    for c in classes:
+        class_index[c] = index
+        index += 1
+    
+    return [class_index[l] for l in labels]
 
 def create_graphviz_tree(root, title, criterion_name, features_name):
     dot = gv.Digraph(comment=title, node_attr={ 'shape':'box', 'style':"filled, rounded", 'color':"lightblue", 'fontname':"helvetica" })

@@ -27,10 +27,10 @@ df = da.oneHotEncoding(df, label_name=label_name, categorical_column=categorical
 x, y = da.split_x_y(df, classes_feature_name)
 
 #Splitting the dataset
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, test_size=0.2, random_state=0)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, test_size=0.3)
 
 #DecisionTreeClassifier Sklearn
-dt = DecisionTreeClassifier(criterion=criterion_type, max_depth=3, random_state = None)
+dt = DecisionTreeClassifier(criterion=criterion_type, max_depth=4, random_state = None)
 dt.fit(x_train, y_train)
 y_pred_train = dt.predict(x_train)
 y_pred_test = dt.predict(x_test)

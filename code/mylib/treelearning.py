@@ -25,6 +25,7 @@ class DecisionTreeClassifier:
         self.criterion_function = self.__get_criterion_function_from_string(criterion)
         self.num_of_feature_on_split = int(num_of_feature_on_split)
         self.root = None
+        self.precision = 0.01
 
     def fit(self, X, Y, categorical_column = [], performance = False):
         if performance:
@@ -58,7 +59,6 @@ class DecisionTreeClassifier:
                 feature_selected_indexes = self.__select_features(number_of_features)
                 #Find the best split from the selected features (considering if they are categorical or numerical)
                 best_split = self.__find_best_split(dataset, criterion_value, len(X), feature_selected_indexes, categorical_column)
-                #if the samples have the same value in all the column, this cycle go forever!!!! 
             #create this node
             if best_split['type'] == 'categorical':
                 n = Node(best_split['feature_index'], 'categorical', None, criterion_value)
@@ -105,7 +105,6 @@ class DecisionTreeClassifier:
                     #Take all the y for every dataset
                     y = dt[:,-1]
                     classes, counts = np.unique(y, return_counts=True)
-                    #devi continuare qua
                     info_gain += -(len(y) / num_of_parent_ex) * self.criterion_function(counts)
                 if info_gain > max_info_gain:
                     max_info_gain = info_gain
@@ -128,7 +127,7 @@ class DecisionTreeClassifier:
                     left_count[index] += 1
                     right_counts[index] -= 1
                     split_index += 1
-                    #Da cambiare l'== con un controllo di precisione
+                    #while abs(sorted_dataset[split_index - 1, feature] - sorted_dataset[split_index, feature]) < self.precision and split_index <= dt_lenght - 2:
                     while sorted_dataset[split_index - 1, feature] == sorted_dataset[split_index, feature] and split_index <= dt_lenght - 2:
                         index = encoded_cls[split_index]
                         left_count[index] += 1
@@ -142,10 +141,9 @@ class DecisionTreeClassifier:
                     if info_gain >= max_info_gain:
                         max_info_gain = info_gain
                         best_split['feature_index'] = feature
-                        best_split['threshold'] = floor(((sorted_dataset[split_index - 1, feature] + sorted_dataset[split_index, feature]) / 2) * 100) / 100
+                        best_split['threshold'] = (sorted_dataset[split_index - 1, feature] + sorted_dataset[split_index, feature]) / 2
                         best_split['type'] = 'numerical'
                         best_split['info_gain'] = max_info_gain
-                        #Il problema è qui, l'index dovrebbe essere uno in più ma non puoi fare questo caso perche ti va in index out of bound
                         best_split['datasets'] = {'left': sorted_dataset[:split_index], 'right': sorted_dataset[split_index:]}
         return best_split
 
@@ -199,7 +197,7 @@ class DecisionTreeClassifier:
             if node.feature_type == 'categorical':
                 feature_val = row[node.feature]
                 if feature_val not in node.children.keys():
-                    return node.class_value                                        #Non è del tutto giusto
+                    return node.class_value                                        
                 node = node.children[feature_val]
             else:
                 feature_val = row[node.feature]
@@ -296,7 +294,7 @@ def recursive_graph(dot, root, myindex, criterion_name, features_name):
             s = '{feature_name} = ?\n\ntype={type}\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type,criterion = criterion_name, feature_name = features_name[root.feature], criterion_value =str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
             dot.node(str(myindex),s)
         elif root.feature_type == 'numerical':
-            s = '{feature_name}<={feature_value}\n\ntype={type}\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type, feature_name = features_name[root.feature], criterion = criterion_name, feature_value = root.feature_value,criterion_value = str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
+            s = '{feature_name}<={feature_value}\n\ntype={type}\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type, feature_name = features_name[root.feature], criterion = criterion_name, feature_value = str(round(root.feature_value, 3)),criterion_value = str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))
             dot.node(str(myindex),s)
         else:
             s = 'type={type}\n\n{criterion}={criterion_value}\nsample={sample}\ncount={count}\nclass={c}'.format(type = root.feature_type, criterion = criterion_name,criterion_value = str(round(root.criterion_value, 3)), sample = root.samples_count, count = root.samples_class_count,c=str(root.class_value))

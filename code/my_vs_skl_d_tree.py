@@ -7,14 +7,14 @@ from mylib.treelearning import DecisionTreeClassifier as MyDecisionTreeClassifie
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
-label_name = ['age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg', 'thalach', 'exang', 'oldpeak', 'slope', 'ca', 'thal', 'risknum']
-dataframe_name = "https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data"
-classes_feature_name = 'risknum'
-categorical_column = [2,6,10,11,12]
+label_name = ["fixed acidity","volatile acidity","citric acid","residual sugar","chlorides","free sulfur dioxide","total sulfur dioxide","density","pH","sulphates","alcohol","quality"]
+dataframe_name = r"C:\Users\jinnw\Desktop\Code\Foresta_a_caso\database\winequality-white.csv"
+classes_feature_name = 'quality'
+categorical_column = []
 criterion_type = 'gini'
 
 #read from UCI database with pandas
-df = pd.read_csv(dataframe_name, names = label_name)
+df = pd.read_csv(dataframe_name, sep = ';', names = label_name)
 
 #Delete the row with missing value
 for col in df.columns:
@@ -27,7 +27,7 @@ x, y = da.split_x_y(df, classes_feature_name)
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, test_size=0.3)
 
 #My decision tree classifier
-mdt = MyDecisionTreeClassifier(criterion_type, 2, 4, -1)
+mdt = MyDecisionTreeClassifier(criterion_type, 2, 10, -1)
 mdt.fit(x_train, y_train, categorical_column = categorical_column)
 y_pred_train = mdt.predict(x_train)
 y_pred_test = mdt.predict(x_test)
@@ -53,7 +53,7 @@ print("TEST DATA REPORT\n-------------------------------------------------------
 print(classification_report(y_test, y_pred_test, zero_division=0))
 
 #DecisionTreeClassifier Sklearn
-dt = DecisionTreeClassifier(criterion=criterion_type, max_depth=4, random_state = None)
+dt = DecisionTreeClassifier(criterion=criterion_type, max_depth=10, random_state = None)
 dt.fit(x_train, y_train)
 y_pred_train = dt.predict(x_train)
 y_pred_test = dt.predict(x_test)

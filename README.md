@@ -4,6 +4,10 @@ Per il mio progetto di Intelligenza Artificiale ho implementato l’algoritmo to
 
 Un maggiore approfondimento e i risultati sono riportati nel file Risultati.pdf
 
+# ATTENZIONE:
+
+A causa dei recenti problemi di aggiornamento di UCI machine data repository, tutti i database sono presenti all'interno del repository, quindi è necessario cambiare il percorso del database all'interno del file per far funzionare tutto. (Situazione al 09/06/2023)
+
 ## Requirements
 
 Per utilizzare questo progetto, è necessario installare le seguenti librerie (tuttavia non tutti gli script utilizzano necessariamente tutte le librerie, quindi in base alle dipendenze dello script si può decidere di non installare alcune librerie):
@@ -32,7 +36,7 @@ Per utilizzare questo progetto, è necessario installare le seguenti librerie (t
 
 In alcuni casi la libreria da un po' di problemi, consiglio di installare dal pacchetto apt (in caso si usi windows sono necessari ulteriori passaggi vedi la pagina di graphviz):
 
-``` apt install graphviz ```  Installare il pacchetto
+``` apt install graphviz ```  installare il pacchetto
 
 ### matplotlib
 
@@ -52,7 +56,9 @@ Per utilizzare questo progetto, è necessario clonare il repository e installare
 ### Risultati Decision Tree
 Per replicare i risultati (immagini degli alberi) presenti nel file Relazione.pdf si deve eseguire lo script nominato my_d_tree.py:
 
-``` python my_d_tree.py ```  Per eseguire il comando si deve essere nella caartella dove è contenuto il file.
+``` python my_d_tree.py ```  
+
+Per eseguire il comando si deve essere nella caartella dove è contenuto il file.
 
 Questo script mostra l'albero di decisione su graphviz, le matrici di confusione di train e test e il classification report su train e test.
 Per poter cambiare il database su cui fare la prova, è necessario cambiare i dati relativi al database che sono scritti all'inizio dello script.
@@ -61,12 +67,14 @@ Il file skl_d_tree.py fa la stessa cosa ma utilizzando l'implementazione Decisio
 
 ### Risultati My RandomForest vs Sklearn RandomForest
 
-Per replicare i risultati (grafici) presenti nel file Relazione.pdf si deve eseguire lo script nominato my_vs_skl_r_forest.py:
+Per replicare i risultati (grafici) presenti nel file Relazione.pdf si deve eseguire gli script covertype.py, winequality.py e heartdesease.py (uno per ogni database):
+Es (per il grafico di covertype):
 
-``` python my_vs_skl_r_forest.py ```  Per eseguire il comando si deve essere nella caartella dove è contenuto il file.
+``` python covertype.py```  
 
-Per poter cambiare il database su cui fare la prova, è necessario cambiare i dati relativi al database che sono scritti all'inizio dello script.
-Per semplicità, i dati relativi ai database da me scelti possono essere trovati all'interno del file database.txt, così da poterli copiare e sostituire direttamente nel file python my_vs_skl_r_forest.py.
+Per eseguire il comando si deve essere nella caartella dove è contenuto il file.
+
+Per semplicità, i dati relativi ai database da me scelti possono essere trovati all'interno del file database.txt
 
 ## Licenza
 

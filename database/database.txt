@@ -11,8 +11,32 @@ categorical_column = list(range(10, len(label_name) - 1))
 criterion_type = 'gini'
 
 ---------------------------------------------------------------------------------------
+WINEQUALITY
 
+For more information, read [Cortez et al., 2009].
+Input variables (based on physicochemical tests):
+   1 - fixed acidity
+   2 - volatile acidity
+   3 - citric acid
+   4 - residual sugar
+   5 - chlorides
+   6 - free sulfur dioxide
+   7 - total sulfur dioxide
+   8 - density
+   9 - pH
+   10 - sulphates
+   11 - alcohol
+Output variable (based on sensory data): 
+   12 - quality (score between 0 and 10)
 
+label_name = ["fixed acidity","volatile acidity","citric acid","residual sugar","chlorides","free sulfur dioxide","total sulfur dioxide","density","pH","sulphates","alcohol","quality"]
+dataframe_name = r"C:\Users\jinnw\Desktop\Code\Foresta_a_caso\database\winequality-white.csv"
+classes_feature_name = 'quality'
+categorical_column = []
+criterion_type = 'gini'
+
+#read from UCI database with pandas
+df = pd.read_csv(dataframe_name, sep = ';', names = label_name)
 
 ---------------------------------------------------------------------------------------
 HEART DISEASE

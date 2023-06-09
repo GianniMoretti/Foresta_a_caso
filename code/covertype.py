@@ -11,9 +11,9 @@ from mylib.treelearning import RandomForestClassifier as MyRandomForestClassifie
 ########################### MAIN ############################
 #Parametri da cambiare per utilizzare un database diverso
 label_name = ["Elevation", "Aspect", "Slope", "Horizontal_Distance_To_Hydrology", "Vertical_Distance_To_Hydrology", "Horizontal_Distance_To_Roadways", "Hillshade_9am", "Hillshade_Noon", "Hillshade_3pm", "Horizontal_Distance_To_Fire_Points", "Wilderness_Area1", "Wilderness_Area2", "Wilderness_Area3", "Wilderness_Area4", "Soil_Type1", "Soil_Type2", "Soil_Type3", "Soil_Type4", "Soil_Type5", "Soil_Type6", "Soil_Type7", "Soil_Type8", "Soil_Type9", "Soil_Type10", "Soil_Type11", "Soil_Type12", "Soil_Type13", "Soil_Type14", "Soil_Type15", "Soil_Type16", "Soil_Type17", "Soil_Type18", "Soil_Type19", "Soil_Type20", "Soil_Type21", "Soil_Type22", "Soil_Type23", "Soil_Type24", "Soil_Type25", "Soil_Type26", "Soil_Type27", "Soil_Type28", "Soil_Type29", "Soil_Type30", "Soil_Type31", "Soil_Type32", "Soil_Type33", "Soil_Type34", "Soil_Type35", "Soil_Type36", "Soil_Type37", "Soil_Type38", "Soil_Type39", "Soil_Type40", "Cover_Type"]
-dataframe_name = "/home/giannimoretti/Desktop/Unifi/AI/Foresta_a_caso/database/covtype.data"
+dataframe_name = r"C:\Users\jinnw\Desktop\Code\Foresta_a_caso\database\covtype.data"
 classes_feature_name = "Cover_Type"
-categorical_column = list(range(10, len(label_name) - 1))
+categorical_column = []
 criterion_type = 'gini'
 
 #read from UCI database with pandas
@@ -38,7 +38,7 @@ values = []
 #Splitting the dataset
 x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, test_size=0.3)
 
-for value in range(1, 30, 5):
+for value in range(1, 52, 10):
     sum_train_my = 0
     sum_train_skl = 0
     sum_test_my = 0
@@ -69,9 +69,8 @@ for value in range(1, 30, 5):
     skl_accuracy_test.append(sum_test_skl/N_p_value)
     values.append(value)
 
-
 plt.subplot(1, 2, 1)
-plt.ylim([0, 1.01])
+plt.ylim([0.4, 1.01])
 plt.title("Train")
 plt.xlabel("tree number")
 plt.ylabel("Accuracy")
@@ -80,7 +79,7 @@ plt.plot(values, skl_accuracy_train, color='red', label='Skl_RF')
 plt.legend()
 
 plt.subplot(1, 2, 2)
-plt.ylim([0, 1.01])
+plt.ylim([0.4, 1.01])
 plt.title("Test")
 plt.xlabel("Tree number")
 plt.ylabel("Accuracy")

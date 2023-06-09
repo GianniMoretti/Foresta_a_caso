@@ -5,8 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from matplotlib import pyplot as plt
 
 import mylib.datanalysis as da
-from mylib.treelerning import RandomForestClassifier as MyRandomForestClassifier
-
+from mylib.treelearning import RandomForestClassifier as MyRandomForestClassifier
 
 ########################### MAIN ############################
 #Parametri da cambiare per utilizzare un database diverso

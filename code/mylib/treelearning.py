@@ -1,7 +1,6 @@
 import numpy as np
 import random as rn
 import graphviz as gv
-from sklearn.utils import resample
 from tqdm import tqdm
 import cProfile
 from math import floor
@@ -27,18 +26,19 @@ class DecisionTreeClassifier:
         self.num_of_feature_on_split = int(num_of_feature_on_split)
         self.root = None
 
-    #devo riusare gli attributi che ho gia usato o toglierli?
-    def fit(self, X, Y, categorical_column = []):
-        profiler = cProfile.Profile()
-        profiler.enable()
+    def fit(self, X, Y, categorical_column = [], performance = False):
+        if performance:
+            profiler = cProfile.Profile()
+            profiler.enable()
         Y = np.resize(Y, (len(Y), 1))
         dataset = np.append(X, Y, axis=1)
         all_classes_value = np.unique(Y)
         self.root = self.__decision_tree_learning(dataset, 0, categorical_column, all_classes_value)
+        if performance:
             # Ferma il profiler
-        profiler.disable()
-        # Visualizza i risultati del profiler
-        profiler.print_stats()
+            profiler.disable()
+            # Visualizza i risultati del profiler
+            profiler.print_stats()
 
     def __decision_tree_learning(self, dataset, current_depth, categorical_column, all_classes_value):
         #split in X, Y
@@ -137,7 +137,6 @@ class DecisionTreeClassifier:
 
                     w_l = split_index / num_of_parent_ex
                     w_r = (dt_lenght - split_index) / num_of_parent_ex
-
                     info_gain = parent_criterion_value - (w_l * self.criterion_function(left_count) + w_r * self.criterion_function(right_counts))
 
                     if info_gain >= max_info_gain:

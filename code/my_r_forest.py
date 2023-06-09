@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
-from mylib.treelerning import RandomForestClassifier as MyRandomForestClassifier
+from mylib.treelearning import RandomForestClassifier as MyRandomForestClassifier
 import mylib.datanalysis as da
 
 ########################### MAIN ############################
